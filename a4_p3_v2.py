@@ -1,9 +1,4 @@
-"""
-Part 3: Screen-Camera Communication - MINIMAL DEBUG VERSION
-
-Simplified to bare minimum to get it working
-Starting with higher alpha to test, then can reduce
-"""
+# Alpha Channel Communication
 
 import cv2
 import numpy as np
@@ -53,16 +48,7 @@ def binary_to_text(binary):
 # ============================================================================
 
 def run_transmitter(binary_message):
-    
-    try:
-        background = cv2.imread(BACKGROUND_IMAGE)
-        if background is None:
-            raise Exception()
-        print(f"✓ Loaded {BACKGROUND_IMAGE}")
-    except:
-        print(f"✗ Using gradient background")
-        background = np.ones((480, 640, 3), dtype=np.uint8) * 150
-    
+    background = cv2.imread(BACKGROUND_IMAGE)    
     background = cv2.resize(background, (640, 480))
     
     # BFSK encoding
@@ -81,8 +67,6 @@ def run_transmitter(binary_message):
     
     cv2.namedWindow('TX', cv2.WINDOW_NORMAL)
     cv2.resizeWindow('TX', 640, 480)
-    
-    print(f"✓ Transmitter ready: {len(alpha_sequence)} frames")
     
     idx = 0
     while True:
@@ -121,9 +105,6 @@ def run_receiver(binary_message):
     decoded_text = "..."
     last_decode = 0
     
-    print(f"✓ Receiver ready: buffer={buffer_size}, bits={bits_needed}")
-    print(f"  Point camera at TX window!")
-    
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -151,7 +132,7 @@ def run_receiver(binary_message):
             
             last_decode = now
         
-        # Just show the text - NOTHING ELSE
+        # Display decoded message
         display = frame.copy()
         cv2.putText(display, decoded_text, (50, 240),
                    cv2.FONT_HERSHEY_SIMPLEX, 4, (0, 255, 0), 8)
@@ -211,9 +192,6 @@ def decode(intensities, num_bits, frames_per_bit):
 # ============================================================================
 
 def main():
-    print("="*60)
-    print("Screen-Camera Communication - DEBUG")
-    print("="*60)
     
     binary = text_to_binary(MESSAGE)
     
